@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#173d22">
+<title>Yönetim · Uygulama Merkezi</title>
+<link rel="icon" type="image/png" href="../icons/favicon.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<style>
+:root{--g9:#173d22;--g8:#1f5130;--g7:#2a6a3f;--g5:#52a868;--g1:#eef7ec;--warn:#c8432f;--warn1:#fdecea;--amber:#d98b1c;--amber1:#fff4df;--blue:#2f78b5;--blue1:#e5f0fa;--ink:#1d2a20;--mut:#5d6f61;--line:#dfe8dc;--bg:#f4f6f1}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer;border:0;background:none}
+#top{position:sticky;top:0;z-index:10;background:var(--g9);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 0}
+#top h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}#top h1 span{flex:1}
+#tabs{display:flex;gap:4px;overflow-x:auto;margin-top:8px;scrollbar-width:none}#tabs::-webkit-scrollbar{display:none}
+#tabs a{color:#cfe6d2;text-decoration:none;padding:9px 11px;border-radius:10px 10px 0 0;white-space:nowrap;font-weight:700;font-size:14px}
+#tabs a.on{background:var(--bg);color:var(--g9)}#tabs .badge{background:var(--warn);color:#fff;border-radius:99px;padding:0 6px;font-size:11px;margin-left:4px}
+main{max-width:980px;margin:0 auto;padding:14px}
+.card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 6px rgba(20,50,20,.07);margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stat{background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 6px rgba(20,50,20,.07)}.stat .k{font-size:12px;color:var(--mut);font-weight:700}.stat .v{font-size:22px;font-weight:900;margin-top:2px}
+.btn{background:var(--g7);color:#fff;border-radius:11px;padding:9px 14px;font-weight:800;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn.ghost{background:var(--g1);color:var(--g8)}.btn.warn{background:var(--warn)}.btn.sm{padding:6px 10px;font-size:13px}.btn:disabled{opacity:.5}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:800;background:var(--g1);color:var(--g8)}.tag.r{background:var(--warn1);color:var(--warn)}.tag.a{background:var(--amber1);color:#8a5408}.tag.b{background:var(--blue1);color:var(--blue)}
+.mut{color:var(--mut)}.sm{font-size:13px}.xs{font-size:12px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}td,th{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}th{background:var(--g1);font-size:12px;color:var(--mut)}
+.tw{overflow-x:auto}
+label{display:block;font-size:12px;font-weight:800;color:var(--mut);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;background:#fff}textarea{min-height:70px}
+input[type=checkbox]{width:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.chip{padding:6px 11px;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-weight:700;font-size:13px}.chip.on{background:var(--g8);color:#fff;border-color:var(--g8)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.modal .in{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+@media(min-width:700px){.modal{align-items:center}.modal .in{border-radius:20px}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--g9);color:#fff;padding:10px 16px;border-radius:12px;z-index:99;font-weight:700}
+.alert{border-radius:12px;padding:10px 12px;margin:8px 0;font-size:14px}.alert.a{background:var(--amber1);color:#6b4207}.alert.r{background:var(--warn1);color:#7c2316}.alert.g{background:var(--g1);color:var(--g9)}.alert.b{background:var(--blue1);color:#164a74}
+.bar{height:8px;border-radius:5px;background:var(--g5)}
+#login{max-width:380px;margin:60px auto}
+</style>
+</head>
+<body>
+<div id="top"><h1>🛠️ <span>Yönetim</span><a class="btn sm ghost" href="../">Uygulama</a> <button class="btn sm ghost" id="out" style="display:none">Çıkış</button></h1><nav id="tabs"></nav></div>
+<main id="m"><p class="mut">Yükleniyor…</p></main>
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const C=window.CD_CFG||{};if(C.SUPABASE_URL)C.SUPABASE_URL=String(C.SUPABASE_URL).trim().replace(/\/(rest|auth|storage|functions)\/v1.*$/i,"").replace(/\/+$/,"");if(C.SUPABASE_ANON_KEY)C.SUPABASE_ANON_KEY=String(C.SUPABASE_ANON_KEY).trim();const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const tl=n=>Number(n||0).toLocaleString("tr-TR",{maximumFractionDigits:2})+" ₺";
+const usd=n=>"$"+Number(n||0).toFixed(Number(n)<1?4:2);
+const fd=d=>d?new Date(d).toLocaleDateString("tr-TR",{day:"numeric",month:"short",year:"numeric"}):"—";
+const fdt=d=>d?new Date(d).toLocaleString("tr-TR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
+const days=d=>Math.ceil((new Date(d)-Date.now())/864e5);
+function toast(t){const e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+function modal(html,mount){const w=document.createElement("div");w.className="modal";w.innerHTML=`<div class="in">${html}<button class="btn ghost" data-x style="width:100%;justify-content:center;margin-top:12px">Kapat</button></div>`;document.body.appendChild(w);
+  const close=()=>w.remove();w.addEventListener("click",e=>{if(e.target===w||e.target.closest("[data-x]"))close()});if(mount)mount(w,close);return close}
+const ask=(msg,yes)=>new Promise(r=>{modal(`<p>${msg}</p><button class="btn warn" id="ok" style="width:100%;justify-content:center">${yes||"Evet"}</button>`,(w,c)=>{w.querySelector("#ok").onclick=()=>{c();r(true)};w.addEventListener("click",e=>{if(e.target.closest("[data-x]"))r(false)})})});
+let sb,ME=null,S={},PLANS=[],APPS=[];
+const TABS=[["ozet","📊 Özet"],["odemeler","💰 Ödemeler"],["kullanicilar","👥 Kullanıcılar"],["planlar","📦 Planlar"],["yapayzeka","🤖 Yapay zekâ"],["ayarlar","⚙️ Ayarlar"],["uygulamalar","🧩 Uygulamalar"]];
+const tab=()=>(location.hash||"#ozet").slice(1);
+let PENDING=0;
+function nav(){$("#tabs").innerHTML=TABS.map(([k,t])=>`<a href="#${k}" class="${tab()===k?"on":""}">${t}${k==="odemeler"&&PENDING?`<span class="badge">${PENDING}</span>`:""}</a>`).join("")}
+async function rpc(n,a){const {data,error}=await sb.rpc(n,a||{});if(error)throw error;return data}
+async function q(p){const {data,error}=await p;if(error)throw error;return data}
+function err(e){toast(e&&e.message||String(e));console.error(e)}
+
+/* ---------- Giriş ---------- */
+function loginView(msg){$("#tabs").innerHTML="";$("#m").innerHTML=`<div id="login" class="card"><h2 style="margin-top:0">Yönetici girişi</h2>${msg?`<div class="alert r">${esc(msg)}</div>`:""}<label>E-posta</label><input id="le" type="email" autocomplete="email"><label>Şifre</label><input id="lp" type="password" autocomplete="current-password"><button class="btn" id="lg" style="width:100%;justify-content:center;margin-top:12px">Giriş</button><p class="xs mut">Uygulamadaki hesabınızla girin. Hesabınızın yönetici olması gerekir.</p></div>`;
+  $("#lg").onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$("#le").value.trim(),password:$("#lp").value});if(error)loginView(/Invalid/.test(error.message)?"E-posta veya şifre hatalı.":error.message);else boot()};
+  $("#lp").onkeydown=e=>{if(e.key==="Enter")$("#lg").click()}}
+
+async function boot(){
+  if(!C.SUPABASE_URL||!window.supabase){$("#m").innerHTML=`<div class="alert r">config.js ayarlanmamış veya internet yok.</div>`;return}
+  sb=sb||supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  const {data}=await sb.auth.getSession();if(!data.session)return loginView();
+  const ok=await rpc("is_admin").catch(()=>false);if(!ok){await sb.auth.signOut();return loginView("Bu hesabın yönetici yetkisi yok.")}
+  ME=data.session.user;$("#out").style.display="";$("#out").onclick=async()=>{await sb.auth.signOut();location.reload()};
+  await loadRefs();window.onhashchange=route;route();
+  setInterval(async()=>{try{const s=await rpc("admin_stats");if(s.pending!==PENDING){PENDING=s.pending;nav()}}catch(e){}},60000);
+}
+async function loadRefs(){const [st,pl,ap]=await Promise.all([q(sb.from("settings").select("*")),q(sb.from("plans").select("*").order("sort")),q(sb.from("apps").select("*").order("created_at"))]);
+  S={};st.forEach(r=>S[r.key]=r.value);PLANS=pl;APPS=ap}
+async function route(){nav();const v=VIEWS[tab()]||VIEWS.ozet;$("#m").innerHTML=`<p class="mut">Yükleniyor…</p>`;try{await v()}catch(e){$("#m").innerHTML=`<div class="alert r">${esc(e.message||e)}</div>`}nav();scrollTo(0,0)}
+const VIEWS={};
+const planName=id=>(PLANS.find(p=>p.id===id)||{}).name||"?";
+const usdTry=()=>typeof S.usd_try==="number"&&S.usd_try>0?S.usd_try:null;
+const cost=n=>usd(n)+(usdTry()?` <span class="xs mut">(${tl(n*usdTry())})</span>`:"");
+
+/* ---------- Özet ---------- */
+VIEWS.ozet=async()=>{const s=await rpc("admin_stats");PENDING=s.pending;
+  const exp=await q(sb.from("subscriptions").select("id,ends_at,source,plan_id,profiles(email,full_name)").eq("status","active").neq("source","aile").gte("ends_at",new Date().toISOString()).lte("ends_at",new Date(Date.now()+7*864e5).toISOString()).order("ends_at"));
+  const pend=await q(sb.from("payments").select("id,amount,ref_code,sender_name,created_at,profiles(email)").eq("status","pending").order("created_at").limit(5));
+  const warn=[];if(!(S.bank&&S.bank.iban))warn.push("Banka/IBAN bilgisi girilmemiş (Ayarlar).");if(!PLANS.some(p=>p.active&&p.public&&+p.price_try>0))warn.push("Satışta fiyatı belirlenmiş plan yok (Planlar).");
+  $("#m").innerHTML=`${warn.map(w=>`<div class="alert a">⚠️ ${w}</div>`).join("")}
+  <div class="grid">
+   <div class="stat"><div class="k">Kullanıcı</div><div class="v">${s.users}</div><div class="xs mut">+${s.new_week} bu hafta</div></div>
+   <div class="stat"><div class="k">Etkin abone</div><div class="v">${s.active_subs}</div><div class="xs mut">${s.paying_subs} ödeyen</div></div>
+   <div class="stat" style="${s.pending?"outline:2px solid var(--warn)":""}"><div class="k">Bekleyen ödeme</div><div class="v">${s.pending}</div></div>
+   <div class="stat"><div class="k">Bu ay gelir</div><div class="v">${tl(s.revenue_month)}</div><div class="xs mut">Toplam ${tl(s.revenue_total)}</div></div>
+   <div class="stat"><div class="k">Yapay zekâ bugün</div><div class="v">${s.ai_calls_today}</div><div class="xs mut">${cost(s.ai_cost_today)}</div></div>
+   <div class="stat"><div class="k">YZ maliyeti bu ay</div><div class="v">${usd(s.ai_cost_month)}</div><div class="xs mut">${usdTry()?tl(s.ai_cost_month*usdTry()):"kur girilmedi"}</div></div>
+  </div>
+  <div class="card"><div class="row"><b class="sp">💰 Onay bekleyen havaleler</b><a class="btn sm ghost" href="#odemeler">Tümü</a></div>${pend.length?pend.map(p=>`<div class="row sm" style="padding:6px 0;border-bottom:1px solid var(--line)"><span class="sp">${esc(p.sender_name||"")} <span class="xs mut">${esc(p.profiles?.email||"")}</span></span><b>${tl(p.amount)}</b><span class="tag">${p.ref_code}</span></div>`).join(""):`<p class="mut sm">Bekleyen yok.</p>`}</div>
+  <div class="card"><b>⏳ 7 gün içinde bitecek abonelikler (${exp.length})</b>${exp.length?exp.map(x=>`<div class="row sm" style="padding:6px 0;border-bottom:1px solid var(--line)"><span class="sp">${esc(x.profiles?.full_name||"")} <span class="xs mut">${esc(x.profiles?.email||"")}</span></span><span class="tag a">${days(x.ends_at)} gün</span><span class="xs">${esc(planName(x.plan_id))}</span></div>`).join(""):`<p class="mut sm">Yok.</p>`}</div>`};
+
+/* ---------- Ödemeler ---------- */
+let PF="pending";
+const PST={awaiting:["Havale bekleniyor","a"],pending:["Onay bekliyor","b"],approved:["Onaylandı",""],rejected:["Reddedildi","r"],cancelled:["İptal","r"]};
+VIEWS.odemeler=async()=>{let qq=sb.from("payments").select("*,profiles(email,full_name)").order("created_at",{ascending:false}).limit(200);if(PF!=="all")qq=qq.eq("status",PF);const L=await q(qq);
+  $("#m").innerHTML=`<div class="chips">${[["pending","Onay bekleyen"],["awaiting","Havale beklenen"],["approved","Onaylanan"],["rejected","Reddedilen"],["all","Tümü"]].map(([k,t])=>`<button class="chip ${PF===k?"on":""}" data-pf="${k}">${t}</button>`).join("")}</div>
+  <div class="alert b sm">Banka hesabınızda <b>referans kodunu</b> ve tutarı kontrol edip onaylayın. Onay, aboneliği otomatik başlatır (süren abonelik varsa üzerine ekler).</div>
+  ${L.length?L.map(p=>`<div class="card"><div class="row"><b class="sp">${esc(p.sender_name||p.profiles?.full_name||"—")}</b><span class="tag ${PST[p.status][1]}">${PST[p.status][0]}</span></div>
+   <div class="sm" style="margin-top:4px">${esc(p.profiles?.email||"")} · <b>${esc(planName(p.plan_id))}</b> · <b style="font-size:17px">${tl(p.amount)}</b></div>
+   <div class="sm">Referans: <b style="letter-spacing:1px">${esc(p.ref_code)}</b> · Gönderim: ${fd(p.transfer_date)} · Bildirim: ${fdt(p.notified_at||p.created_at)}</div>
+   ${p.user_note?`<div class="sm">Not: ${esc(p.user_note)}</div>`:""}${p.admin_note?`<div class="sm mut">Yönetici notu: ${esc(p.admin_note)}</div>`:""}
+   <div class="row" style="margin-top:8px">${p.receipt_path?`<button class="btn sm ghost" data-rc="${esc(p.receipt_path)}">🧾 Dekont</button>`:""}${["pending","awaiting"].includes(p.status)?`<button class="btn sm" data-ap="${p.id}" data-u="${p.user_id}">✅ Onayla</button><button class="btn sm warn" data-rj="${p.id}" data-u="${p.user_id}">Reddet</button>`:""}</div></div>`).join(""):`<p class="mut">Kayıt yok.</p>`}`;
+  document.querySelectorAll("[data-pf]").forEach(b=>b.onclick=()=>{PF=b.dataset.pf;route()});
+  document.querySelectorAll("[data-rc]").forEach(b=>b.onclick=async()=>{const {data,error}=await sb.storage.from("receipts").createSignedUrl(b.dataset.rc,600);if(error)return err(error);window.open(data.signedUrl,"_blank")});
+  document.querySelectorAll("[data-ap]").forEach(b=>b.onclick=()=>modal(`<h3 style="margin-top:0">Ödemeyi onayla</h3><p class="sm">Tutarın ve referans kodunun hesabınıza geçtiğini kontrol ettiniz mi?</p><label>Not (isteğe bağlı)</label><input id="an"><button class="btn" id="ok" style="width:100%;justify-content:center;margin-top:10px">Onayla ve aboneliği başlat</button>`,(w,c)=>{w.querySelector("#ok").onclick=async()=>{try{const s=await rpc("approve_payment",{p_id:b.dataset.ap,p_note:w.querySelector("#an").value||null});sb.functions.invoke("notify",{body:{type:"approved",user_id:b.dataset.u}}).catch(()=>{});c();toast("Onaylandı · bitiş "+fd(s.ends_at));route()}catch(e){err(e)}}}));
+  document.querySelectorAll("[data-rj]").forEach(b=>b.onclick=()=>modal(`<h3 style="margin-top:0">Ödemeyi reddet</h3><label>Sebep (kullanıcı görür)</label><input id="rn" placeholder="Örn: Hesabımıza ulaşmadı / tutar eksik"><button class="btn warn" id="ok" style="width:100%;justify-content:center;margin-top:10px">Reddet</button>`,(w,c)=>{w.querySelector("#ok").onclick=async()=>{const n=w.querySelector("#rn").value.trim();if(!n)return toast("Sebep yazın");try{await rpc("reject_payment",{p_id:b.dataset.rj,p_note:n});sb.functions.invoke("notify",{body:{type:"rejected",user_id:b.dataset.u}}).catch(()=>{});c();toast("Reddedildi");route()}catch(e){err(e)}}}));
+};
+
+/* ---------- Kullanıcılar ---------- */
+let UQ="";
+VIEWS.kullanicilar=async()=>{const [U,subs]=await Promise.all([q(sb.from("profiles").select("*").order("created_at",{ascending:false}).limit(1000)),q(sb.from("subscriptions").select("user_id,ends_at,plan_id,source").eq("status","active").gte("ends_at",new Date().toISOString()))]);
+  const act={};subs.forEach(s=>{if(!act[s.user_id]||act[s.user_id].ends_at<s.ends_at)act[s.user_id]=s});
+  const draw=()=>{const k=UQ.toLocaleLowerCase("tr");const L=U.filter(u=>!k||((u.email||"")+" "+(u.full_name||"")).toLocaleLowerCase("tr").includes(k));
+    $("#ul").innerHTML=`<div class="tw"><table><tr><th>Kullanıcı</th><th>Abonelik</th><th>Kayıt</th><th>Son görülme</th></tr>${L.map(u=>{const a=act[u.id];return `<tr data-u="${u.id}" style="cursor:pointer"><td><b>${esc(u.full_name||"—")}</b>${u.role==="admin"?` <span class="tag b">yönetici</span>`:""}${u.banned?` <span class="tag r">askıda</span>`:""}<div class="xs mut">${esc(u.email||"")}</div></td><td>${a?`<span class="tag">${esc(planName(a.plan_id))}</span><div class="xs mut">${a.source==="aile"?"süresiz":days(a.ends_at)+" gün"}</div>`:`<span class="xs mut">yok</span>`}</td><td class="xs">${fd(u.created_at)}</td><td class="xs">${fdt(u.last_seen)}</td></tr>`}).join("")}</table></div><p class="xs mut">${L.length} kullanıcı</p>`;
+    document.querySelectorAll("[data-u]").forEach(r=>r.onclick=()=>userDetail(U.find(u=>u.id===r.dataset.u)))};
+  $("#m").innerHTML=`<input id="uq" placeholder="E-posta veya ad ara…" value="${esc(UQ)}"><div id="ul"></div>`;$("#uq").oninput=e=>{UQ=e.target.value;draw()};draw()};
+async function userDetail(u){
+  const [subs,pays,usage]=await Promise.all([q(sb.from("subscriptions").select("*").eq("user_id",u.id).order("created_at",{ascending:false})),q(sb.from("payments").select("*").eq("user_id",u.id).order("created_at",{ascending:false})),q(sb.from("ai_usage").select("cost_usd,created_at").eq("user_id",u.id).gte("created_at",new Date(Date.now()-30*864e5).toISOString()))]);
+  const c30=usage.reduce((s,r)=>s+Number(r.cost_usd),0);
+  modal(`<h3 style="margin:0">${esc(u.full_name||"—")}</h3><div class="sm mut">${esc(u.email||"")}${u.phone?" · "+esc(u.phone):""}</div><div class="xs mut">Kayıt ${fd(u.created_at)} · son görülme ${fdt(u.last_seen)}</div>
+   <div class="row" style="margin:10px 0"><span class="tag">YZ son 30 gün: ${usage.length} istek · ${usd(c30)}</span></div>
+   <h4>Abonelikler</h4>${subs.length?subs.map(s=>{const live=s.status==="active"&&new Date(s.ends_at)>new Date();return `<div class="row sm" style="padding:5px 0;border-bottom:1px solid var(--line)"><span class="sp"><b>${esc(planName(s.plan_id))}</b> <span class="tag ${live?"":"r"}">${live?"etkin":s.status==="cancelled"?"iptal":"bitti"}</span><div class="xs mut">${s.source} · ${fd(s.starts_at)} → ${s.source==="aile"?"süresiz":fd(s.ends_at)}${s.note?" · "+esc(s.note):""}</div></span>${live?`<button class="btn sm ghost" data-cs="${s.id}">İptal</button>`:""}</div>`}).join(""):`<p class="sm mut">Yok</p>`}
+   <h4>Abonelik ver / uzat</h4><div class="row"><select id="gp" style="flex:2">${PLANS.map(p=>`<option value="${p.id}">${esc(p.name)} (${p.period_days} gün)</option>`).join("")}</select><input id="gd" type="number" placeholder="Gün (boş=plan süresi)" style="flex:1"></div>
+   <div class="row" style="margin-top:6px"><select id="gs" style="flex:1"><option value="admin">Yönetici hediyesi</option><option value="havale">Havale (elle)</option><option value="aile">Aile</option></select><input id="gn" placeholder="Not" style="flex:2"></div>
+   <div class="row" style="margin-top:8px"><button class="btn" id="gg">Ver</button><button class="btn ghost" id="fam">👨‍👩‍👧 Aile üyesi yap (süresiz)</button></div>
+   <h4>Ödemeler</h4>${pays.length?pays.map(p=>`<div class="sm" style="padding:4px 0;border-bottom:1px solid var(--line)">${fd(p.created_at)} · ${tl(p.amount)} · ${p.ref_code} · <span class="tag ${PST[p.status][1]}">${PST[p.status][0]}</span></div>`).join(""):`<p class="sm mut">Yok</p>`}
+   <h4>Hesap</h4><div class="row">${u.id!==ME.id?`<button class="btn sm ghost" id="rl">${u.role==="admin"?"Yöneticiliği kaldır":"Yönetici yap"}</button><button class="btn sm ${u.banned?"ghost":"warn"}" id="bn">${u.banned?"Askıdan al":"Askıya al"}</button>`:`<span class="xs mut">Kendi hesabınız</span>`}</div>`,(w,close)=>{
+    const done=m=>{toast(m);close();route()};
+    w.querySelectorAll("[data-cs]").forEach(b=>b.onclick=async()=>{if(await ask("Abonelik iptal edilsin mi?","İptal et")){try{await rpc("admin_cancel_sub",{p_id:b.dataset.cs});done("İptal edildi")}catch(e){err(e)}}});
+    w.querySelector("#gg").onclick=async()=>{try{const s=await rpc("admin_grant",{p_user:u.id,p_plan:w.querySelector("#gp").value,p_days:+w.querySelector("#gd").value||0,p_source:w.querySelector("#gs").value,p_note:w.querySelector("#gn").value||null});done("Verildi · bitiş "+fd(s.ends_at))}catch(e){err(e)}};
+    w.querySelector("#fam").onclick=async()=>{try{await rpc("admin_grant",{p_user:u.id,p_plan:"00000000-0000-0000-0000-0000000000a1",p_days:36500,p_source:"aile",p_note:"Aile üyesi"});done("Aile üyesi yapıldı")}catch(e){err(e)}};
+    const rl=w.querySelector("#rl");if(rl)rl.onclick=async()=>{try{await rpc("admin_set_user",{p_user:u.id,p_role:u.role==="admin"?"user":"admin",p_banned:null});done("Güncellendi")}catch(e){err(e)}};
+    const bn=w.querySelector("#bn");if(bn)bn.onclick=async()=>{if(await ask(u.banned?"Hesap askıdan alınsın mı?":"Hesap askıya alınsın mı? Yapay zekâ kullanamaz.","Evet")){try{await rpc("admin_set_user",{p_user:u.id,p_role:null,p_banned:!u.banned});done("Güncellendi")}catch(e){err(e)}}};
+  })}
+
+/* ---------- Planlar ---------- */
+VIEWS.planlar=async()=>{await loadRefs();
+  $("#m").innerHTML=`<div class="row"><span class="sp sm mut">Fiyatları ve süreleri siz belirleyin. Fiyatı 0 olan plan satışa çıkmaz. Kullanılan bir planı silmek yerine kapatın.</span><button class="btn" id="np">＋ Yeni plan</button></div>
+  ${PLANS.map(p=>`<div class="card"><div class="row"><b class="sp">${esc(p.name)}</b>${p.active?`<span class="tag">açık</span>`:`<span class="tag r">kapalı</span>`}${p.public?"":`<span class="tag b">gizli</span>`}<b>${tl(p.price_try)}</b><button class="btn sm ghost" data-ep="${p.id}">Düzenle</button></div>
+   <div class="xs mut">${p.app_id?esc((APPS.find(a=>a.id===p.app_id)||{}).name||p.app_id):"Tüm uygulamalar"} · ${p.period_days} gün · günde ${p.ai_daily_limit} YZ isteği${p.description?" · "+esc(p.description):""}</div></div>`).join("")}`;
+  $("#np").onclick=()=>planForm({});document.querySelectorAll("[data-ep]").forEach(b=>b.onclick=()=>planForm(PLANS.find(p=>p.id===b.dataset.ep)))};
+function planForm(p){const isNew=!p.id;
+  modal(`<h3 style="margin-top:0">${isNew?"Yeni plan":"Planı düzenle"}</h3>
+   <label>Ad</label><input id="pn" value="${esc(p.name||"")}">
+   <label>Uygulama</label><select id="pa"><option value="">Tüm uygulamalar (paket)</option>${APPS.map(a=>`<option value="${a.id}" ${p.app_id===a.id?"selected":""}>${esc(a.name)}</option>`).join("")}</select>
+   <div class="row"><div class="sp"><label>Fiyat (₺)</label><input id="pp" type="number" step="0.01" value="${p.price_try??""}"></div><div class="sp"><label>Süre (gün)</label><input id="pd" type="number" value="${p.period_days??30}"></div><div class="sp"><label>Günlük YZ hakkı</label><input id="pl" type="number" value="${p.ai_daily_limit??30}"></div></div>
+   <label>Açıklama</label><input id="ps" value="${esc(p.description||"")}">
+   <label>Özellikler (her satıra bir tane)</label><textarea id="pf">${esc((p.features||[]).join("\n"))}</textarea>
+   <div class="row" style="margin-top:8px"><label style="margin:0"><input type="checkbox" id="pac" ${p.active!==false?"checked":""}> Açık</label><label style="margin:0"><input type="checkbox" id="ppu" ${p.public!==false?"checked":""}> Kullanıcılara görünsün</label><span class="sp"></span><label style="margin:0">Sıra <input id="po" type="number" value="${p.sort??0}" style="width:70px;display:inline-block"></label></div>
+   <button class="btn" id="sv" style="width:100%;justify-content:center;margin-top:12px">Kaydet</button>`,(w,close)=>{
+   w.querySelector("#sv").onclick=async()=>{const v=id=>w.querySelector(id).value;const row={name:v("#pn").trim(),app_id:v("#pa")||null,price_try:+v("#pp")||0,period_days:Math.max(1,+v("#pd")||30),ai_daily_limit:Math.max(0,+v("#pl")||0),description:v("#ps").trim()||null,features:v("#pf").split("\n").map(s=>s.trim()).filter(Boolean),active:w.querySelector("#pac").checked,public:w.querySelector("#ppu").checked,sort:+v("#po")||0};
+     if(!row.name)return toast("Ad gerekli");try{await q(isNew?sb.from("plans").insert(row):sb.from("plans").update(row).eq("id",p.id));close();toast("Kaydedildi");route()}catch(e){err(e)}}})}
+
+/* ---------- Yapay zekâ ---------- */
+VIEWS.yapayzeka=async()=>{const [D,U]=await Promise.all([rpc("admin_ai_daily",{p_days:30}),rpc("admin_ai_users",{p_days:30})]);
+  const mx=Math.max(0.000001,...D.map(d=>+d.cost)),tot=D.reduce((s,d)=>s+ +d.cost,0),calls=D.reduce((s,d)=>s+ +d.calls,0);
+  $("#m").innerHTML=`<div class="grid"><div class="stat"><div class="k">Son 30 gün maliyet</div><div class="v">${usd(tot)}</div><div class="xs mut">${usdTry()?tl(tot*usdTry()):"Ayarlar'dan kur girin"}</div></div><div class="stat"><div class="k">İstek</div><div class="v">${calls}</div></div><div class="stat"><div class="k">İstek başı ort.</div><div class="v">${usd(calls?tot/calls:0)}</div></div><div class="stat"><div class="k">Günlük üst sınır</div><div class="v">${usd((S.ai||{}).daily_usd_cap||0)}</div></div></div>
+  <div class="card"><b>Günlük maliyet</b><div class="tw"><table><tr><th>Gün</th><th>İstek</th><th>Kişi</th><th>Maliyet</th><th style="width:40%"></th></tr>${D.map(d=>`<tr><td>${fd(d.day)}</td><td>${d.calls}</td><td>${d.users}</td><td>${cost(d.cost)}</td><td><div class="bar" style="width:${d.cost/mx*100}%"></div></td></tr>`).join("")||`<tr><td colspan=5 class="mut">Henüz kullanım yok.</td></tr>`}</table></div></div>
+  <div class="card"><b>En çok kullananlar (30 gün)</b><div class="tw"><table><tr><th>Kullanıcı</th><th>İstek</th><th>Maliyet</th></tr>${U.map(u=>`<tr><td>${esc(u.email||u.user_id)}</td><td>${u.calls}</td><td>${cost(u.cost)}</td></tr>`).join("")||`<tr><td colspan=3 class="mut">—</td></tr>`}</table></div>
+  <p class="xs mut">Maliyet, Claude API'nin döndürdüğü gerçek token sayıları × Ayarlar'daki model fiyatlarıyla hesaplanır. Kesin fatura için Anthropic Console'a bakın.</p></div>`};
+
+/* ---------- Ayarlar ---------- */
+VIEWS.ayarlar=async()=>{await loadRefs();const b=S.bank||{},su=S.support||{},ai=S.ai||{models:{},prices:{}};
+  $("#m").innerHTML=`
+  <div class="card"><b>🏦 Havale/EFT bilgileri</b><p class="xs mut">Kullanıcılar ödeme yaparken bu bilgileri görür.</p>
+   <label>Banka</label><input id="bb" value="${esc(b.bank||"")}"><label>Alıcı adı soyadı / unvan</label><input id="bh" value="${esc(b.holder||"")}">
+   <label>IBAN</label><input id="bi" value="${esc(b.iban||"")}" placeholder="TR00 0000 0000 0000 0000 0000 00"><label>Ödeme notu</label><input id="bn" value="${esc(b.note||"")}"></div>
+  <div class="card"><b>💬 Destek</b><label>E-posta</label><input id="se" value="${esc(su.email||"")}"><label>WhatsApp (ülke koduyla, ör. 905xx…)</label><input id="sw" value="${esc(su.whatsapp||"")}"></div>
+  <div class="card"><b>👥 Erişim</b>
+   <div class="row"><div class="sp"><label>Yeni üyeye deneme süresi (gün, 0=yok)</label><input id="td" type="number" value="${+S.trial_days||0}"></div><div class="sp"><label>Abone olmayana günlük YZ hakkı</label><input id="fa" type="number" value="${+S.free_ai_daily||0}"></div></div>
+   <label>Yönetici e-postaları (her satıra bir; kayıt olunca otomatik yönetici)</label><textarea id="ae">${esc((S.admin_emails||[]).join("\n"))}</textarea>
+   <label>Aile e-postaları (kayıt olunca otomatik süresiz aile aboneliği)</label><textarea id="fe">${esc((S.family_emails||[]).join("\n"))}</textarea>
+   <p class="xs mut">Zaten kayıtlı olanları Kullanıcılar → kişi → "Aile üyesi yap" ile ekleyin.</p></div>
+  <div class="card"><b>🤖 Yapay zekâ</b>
+   <div class="row"><div class="sp"><label>Normal istekler modeli</label><input id="md" value="${esc(ai.models.default||"")}"></div><div class="sp"><label>Fotoğraflı/karmaşık istekler modeli</label><input id="mc" value="${esc(ai.models.complex||"")}"></div></div>
+   <label>Model fiyatları (USD / 1 milyon token: giriş, çıkış)</label>
+   <div id="pr">${Object.entries(ai.prices||{}).map(([m,v])=>`<div class="row prw" style="margin:4px 0"><input class="pm" value="${esc(m)}" style="flex:2"><input class="pi" type="number" step="0.01" value="${v[0]}" style="flex:1"><input class="po" type="number" step="0.01" value="${v[1]}" style="flex:1"></div>`).join("")}</div><button class="btn sm ghost" id="addpr">＋ Model ekle</button>
+   <div class="row"><div class="sp"><label>Günlük toplam harcama üst sınırı (USD, 0=sınırsız)</label><input id="cap" type="number" step="0.5" value="${ai.daily_usd_cap||0}"></div><div class="sp"><label>En fazla yanıt uzunluğu (token)</label><input id="mt" type="number" value="${ai.max_tokens||4000}"></div></div>
+   <label>Dolar kuru (₺, raporlarda TL göstermek için; boş bırakılabilir)</label><input id="ut" type="number" step="0.01" value="${usdTry()||""}">
+   <p class="xs mut">Fiyatlar 15 Kasım 2026'da Claude API fiyat sayfasındaki değerlerle girildi; Anthropic fiyat değiştirirse buradan güncelleyin.</p></div>
+  <button class="btn" id="save" style="width:100%;justify-content:center">💾 Ayarları kaydet</button>
+  <div class="card" style="margin-top:16px"><b>🔔 Bildirim (VAPID) anahtarları</b><p class="sm">Bir kez üretin: <b>Genel anahtarı</b> config.js'e ve Supabase'de VAPID_PUBLIC_KEY'e, <b>gizli anahtarı</b> yalnızca Supabase'de VAPID_PRIVATE_KEY'e yazın. Gizli anahtar hiçbir yere kaydedilmez; bu sayfayı kapatmadan kopyalayın.</p><button class="btn ghost" id="vg">Anahtar çifti üret</button><div id="vo"></div></div>`;
+  $("#addpr").onclick=()=>{$("#pr").insertAdjacentHTML("beforeend",`<div class="row prw" style="margin:4px 0"><input class="pm" placeholder="model-adı" style="flex:2"><input class="pi" type="number" step="0.01" placeholder="giriş" style="flex:1"><input class="po" type="number" step="0.01" placeholder="çıkış" style="flex:1"></div>`)};
+  $("#save").onclick=async()=>{const v=id=>$(id).value.trim(),lines=t=>t.split(/[\n,;]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+    const prices={};document.querySelectorAll(".prw").forEach(r=>{const m=r.querySelector(".pm").value.trim();if(m)prices[m]=[+r.querySelector(".pi").value||0,+r.querySelector(".po").value||0]});
+    const rows=[{key:"bank",public:true,value:{bank:v("#bb"),holder:v("#bh"),iban:v("#bi").replace(/\s+/g," ").toUpperCase(),note:v("#bn")}},{key:"support",public:true,value:{email:v("#se"),whatsapp:v("#sw")}},
+      {key:"trial_days",public:true,value:Math.max(0,+v("#td")||0)},{key:"free_ai_daily",public:true,value:Math.max(0,+v("#fa")||0)},
+      {key:"admin_emails",public:false,value:lines($("#ae").value)},{key:"family_emails",public:false,value:lines($("#fe").value)},
+      {key:"ai",public:false,value:{models:{default:v("#md"),complex:v("#mc")},prices,daily_usd_cap:+v("#cap")||0,max_tokens:+v("#mt")||4000}},{key:"usd_try",public:false,value:+v("#ut")||0}];
+    if(rows[0].value.iban&&!/^TR\d{2}( ?\d{4}){5} ?\d{2}$/.test(rows[0].value.iban))return toast("IBAN TR ile başlayan 26 karakter olmalı");
+    try{await q(sb.from("settings").upsert(rows.map(r=>({...r,updated_at:new Date().toISOString()}))));toast("Kaydedildi");loadRefs()}catch(e){err(e)}};
+  $("#vg").onclick=async()=>{const k=await crypto.subtle.generateKey({name:"ECDSA",namedCurve:"P-256"},true,["sign"]);const raw=new Uint8Array(await crypto.subtle.exportKey("raw",k.publicKey));const jwk=await crypto.subtle.exportKey("jwk",k.privateKey);
+    const b64u=u=>btoa(String.fromCharCode(...u)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    $("#vo").innerHTML=`<label>Genel anahtar (VAPID_PUBLIC_KEY)</label><textarea readonly>${b64u(raw)}</textarea><label>Gizli anahtar (VAPID_PRIVATE_KEY)</label><textarea readonly>${jwk.d}</textarea>`};
+};
+
+/* ---------- Uygulamalar ---------- */
+VIEWS.uygulamalar=async()=>{await loadRefs();
+  $("#m").innerHTML=`<p class="sm mut">Merkezdeki uygulamalarınız. Her yeni uygulama aynı hesap, abonelik ve yönetim panelini kullanır; planı tek uygulamaya veya "Tüm uygulamalar" paketine bağlayabilirsiniz.</p>
+  ${APPS.map(a=>`<div class="card row"><span style="font-size:26px">${esc(a.icon||"📱")}</span><span class="sp"><b>${esc(a.name)}</b><div class="xs mut">${esc(a.id)}${a.url?" · "+esc(a.url):""}</div></span>${a.active?`<span class="tag">açık</span>`:`<span class="tag r">kapalı</span>`}<button class="btn sm ghost" data-ea="${esc(a.id)}">Düzenle</button></div>`).join("")}
+  <button class="btn" id="na">＋ Uygulama ekle</button>`;
+  const form=a=>modal(`<h3 style="margin-top:0">${a.id?"Uygulama":"Yeni uygulama"}</h3><label>Kimlik (küçük harf, değiştirilemez)</label><input id="ai" value="${esc(a.id||"")}" ${a.id?"disabled":""}><label>Ad</label><input id="an" value="${esc(a.name||"")}"><label>Simge (emoji)</label><input id="ac" value="${esc(a.icon||"")}"><label>Adres</label><input id="au" value="${esc(a.url||"")}"><label style="margin-top:8px"><input type="checkbox" id="aa" ${a.active!==false?"checked":""}> Açık</label><button class="btn" id="sv" style="width:100%;justify-content:center;margin-top:10px">Kaydet</button>`,(w,c)=>{
+    w.querySelector("#sv").onclick=async()=>{const row={id:(a.id||w.querySelector("#ai").value.trim().toLowerCase()).replace(/[^a-z0-9_-]/g,""),name:w.querySelector("#an").value.trim(),icon:w.querySelector("#ac").value.trim()||null,url:w.querySelector("#au").value.trim()||null,active:w.querySelector("#aa").checked};
+      if(!row.id||!row.name)return toast("Kimlik ve ad gerekli");try{await q(sb.from("apps").upsert(row));c();toast("Kaydedildi");route()}catch(e){err(e)}}});
+  $("#na").onclick=()=>form({});document.querySelectorAll("[data-ea]").forEach(b=>b.onclick=()=>form(APPS.find(a=>a.id===b.dataset.ea)))};
+
+boot();
+</script>
+</body>
+</html>
