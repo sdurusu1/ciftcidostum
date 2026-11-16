@@ -6,5 +6,5 @@ window.CD_CFG = {
   SUPABASE_ANON_KEY: "sb_publishable_8kYHSuPxm6mRBmusvqgXzQ__rpcQDL2",
   APP_ID: "ciftci",
   // Bildirimler için: yönetici panelindeki "VAPID anahtarı üret" ile alacağınız GENEL anahtar
-  VAPID_PUBLIC_KEY: ""
+  VAPID_PUBLIC_KEY: "BJWmzrpOW2u3HrrPvtnquHprIW_UulrLT6RsG7znglrWhqrqbtLkGtgT0aGP7c0f1xnjMEyJLlFkyNI6wPx-huo"
 };
